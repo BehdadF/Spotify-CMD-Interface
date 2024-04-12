@@ -7,9 +7,7 @@ import sys
 class SpotifyManager:
     def __init__(self, client_id, client_secret, 
                  username,
-                 scope="playlist-modify-private" 
-                        "playlist-read-private" 
-                        "user-library-read", 
+                 scope="", 
                  redirect_uri="https://example.com/") -> None:
         """
         Initialize the SpotifyManager instance.
@@ -111,7 +109,7 @@ class SpotifyManager:
         Returns:
             bool: True if the track exists, False otherwise.
         """
-        pID = self.get_playlist_id(playlist_name)
+        pID = self.get_playlist_info(playlist_name, 'id')
         tracks = self.user.playlist_tracks(pID)
         track_names = {track['track']['name'] for track in tracks["items"]}
         return track_name in track_names
@@ -131,7 +129,7 @@ class SpotifyManager:
         """
         try:
             if self.track_exists(playlist_name, track_name):
-                pID = self.get_playlist_id(playlist_name)
+                pID = self.get_playlist_info(playlist_name, 'id')
                 tracks = self.user.playlist_tracks(pID)
                 for track in tracks["items"]:
                     if track_name == track['track']['name']:
@@ -155,7 +153,7 @@ class SpotifyManager:
         """
         try:
             if not self.track_exists(playlist_name, track_name):
-                playlist_id = self.get_playlist_id(playlist_name)
+                playlist_id = self.get_playlist_info(playlist_name)
                 uri_list = self.get_uris("track" ,track_name, **kwargs)
                 self.user.playlist_add_items(playlist_id=playlist_id, items=[uri_list])
                 print('[Completed.]\n[1] track was successfully added.')
@@ -177,7 +175,7 @@ class SpotifyManager:
         track_count = 0
         added_tracks = []
         try:
-            playlist_id = self.get_playlist_id(playlist_name)
+            playlist_id = self.get_playlist_info(playlist_name, 'id')
             result = self.search("album", album_name, **kwargs)
             album_id = result["albums"]["items"][0]["id"]
             res = self.user.album_tracks(album_id)
@@ -303,6 +301,7 @@ class SpotifyManager:
             None
         """
         result = self.user.user_playlists(self.username)
+        # print("res: ", result)
         # counter = 0
         print("\nCurrent Private Playlists:")
         print("========================")
@@ -321,7 +320,7 @@ class SpotifyManager:
         Returns:
             None
         """
-        pID = self.get_playlist_id(playlist)
+        pID = self.get_playlist_info(playlist, 'id')
         tracks = self.user.playlist_tracks(pID)
         print(f"\nTracks in {playlist}")
         print("========================")

@@ -4,14 +4,14 @@ import sys
 
 # ============================
 # # URLs
-REDIRECT = "https://example.com/"
+REDIRECT_URL = "https://example.com/"
 
 # Confidentialities
 CLIENT_ID = ""
 CLIENT_SECRET = ""
 USERNAME = ""
 # SCOPE
-SCOPE = "playlist-modify-private playlist-read-private user-library-read"
+SCOPE = "playlist-modify-private playlist-modify-public playlist-read-private user-library-read"
 # ============================
 
 def playlist_checker(spotify, p):
@@ -73,7 +73,7 @@ def main():
     args = parser.parse_args()
 
 
-    spotify = SpotifyManager(CLIENT_ID, CLIENT_SECRET, USERNAME)
+    spotify = SpotifyManager(CLIENT_ID, CLIENT_SECRET, USERNAME, SCOPE, REDIRECT_URL)
 
     if args.commands == 'add_track':
         playlist_checker(spotify, args.playlist)
